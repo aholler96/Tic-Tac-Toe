@@ -1,0 +1,162 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+int Difficulty;
+
+int Board[3][3] = {
+ { 0, 0, 0},
+ { 0, 0, 0},
+ { 0, 0, 0} 
+};
+
+void ComputerGen(int Board[3][3]) {
+	int a, b;
+	a = abs(rand() % 3);
+	b = abs(rand() % 3);
+	if (Board[a][b] == 0) {
+		Board[a][b] = 2;
+	}
+	else if ((Board[a][b] == 1) || (Board[a][b] == 2)) {
+		ComputerGen(Board);
+	}
+	else
+		ComputerGen(Board);
+};
+
+int main(void) {
+
+	srand(time(NULL));
+	void OnePlayerGame();
+	void TwoPlayerGame();
+
+	int init;
+	printf("Welcome to Adam Holler's Tic-Tac-Toe game!\n");
+	printf("One player(1) or Two player(2)?\n");
+	printf("1/2?:");
+	scanf("%i", &init);
+
+	if (init == 1) {
+		printf("Awesome! Insert your choice 1-9,\ngiven by the table below:\n\n");
+		printf("  7  |  8  |  9  \n");
+		printf("-----------------\n");
+		printf("  4  |  5  |  6  \n");
+		printf("-----------------\n");
+		printf("  1  |  2  |  3  \n\n");
+		printf("Now which difficulty would you like?\n1=Low, 2=Medium, 3=Unbeatable:");
+		scanf("%i", &Difficulty);
+		if (Difficulty < 0 || Difficulty > 3) {
+			printf("Incorrect choice. Closing down game.");
+			_getch();
+			return 0;
+		}
+		printf("We will choose who goes first at random.\n");
+		OnePlayerGame(1);		
+	}
+	else if (init == 2) {
+		printf("Awesome! Insert your choice 1-9,\ngiven by the table below:\n\n");
+		printf("  7  |  8  |  9  \n");
+		printf("-----------------\n");
+		printf("  4  |  5  |  6  \n");
+		printf("-----------------\n");
+		printf("  1  |  2  |  3  \nX goes first\n");
+		TwoPlayerGame(1);
+	}
+	else {
+		printf("Incorrect choice. Closing down game.");
+		_getch();
+		return 0;
+	}	
+	
+	_getch();
+	return 0;
+}
+
+void OnePlayerGame() {
+
+	int i, j;
+	int Game = 0;
+	int a = (rand() % 50);
+	if (a <= 25) {
+		printf("\nThe computer 'O' is working...\n");
+		if (Difficulty == 1)
+			ComputerGen(Board);
+		else if (Difficulty == 2)
+			ComputerSmart(Board);
+		else if (Difficulty == 3)
+			ComputerSuperSmart(Board);
+
+		printBoard(Board);
+	}
+
+	while (Game != 1) {
+		printf("\nInsert 'X': ");
+		ConvertBoard(1, Board);
+		printBoard(Board);
+		Game = ConditionOver(1, Board);
+		if (Game == 1)
+			break;
+
+	printf("\nThe computer 'O' is working...\n");
+	if (Difficulty == 1)
+		ComputerGen(Board);
+	else if (Difficulty == 2)
+		ComputerSmart(Board);
+	else if (Difficulty == 3)
+		ComputerSuperSmart(Board);
+
+	printBoard(Board);
+	Game = ConditionOver(1, Board);
+
+	}
+
+	int ch;
+	printf("\aGame Over! Play again? 1=yes, 0=no.\n");
+	scanf("%i", &ch);
+	if (ch == 1) {
+		ResetBoard(Board);
+		main(1);
+	}
+	else {
+		printf("Well thanks for playing! :)");		
+		return 0;
+	}
+};
+
+void TwoPlayerGame() {
+
+	int i, j;
+	int Game = 0;
+
+	while (Game != 1) {
+		printf("\nInsert 'X': ");
+		ConvertBoard(1, Board);
+		printBoard(&Board);	
+		Game = ConditionOver(2, Board);
+		if (Game == 1) {
+			break;			
+		}
+			
+		printf("\nInsert 'O': ");
+		ConvertBoard(2, Board);
+		printBoard(&Board);	
+		Game = ConditionOver(2, Board);		
+	}
+
+	int ch;
+	printf("\n\aGame Over! Play again? 1=yes, 0=no.\n");
+	scanf("%i", &ch);
+	if (ch == 1) {
+		ResetBoard(Board);
+		main(1);
+	}
+	else {
+		printf("Well thanks for playing! :)");
+		return 0;
+		
+	}
+}
